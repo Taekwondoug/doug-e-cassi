@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>CRUD de Time de Futebol</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
+
 <body>
     <h1>CRUD de Time de Futebol</h1>
     <form id="teamForm">
@@ -14,44 +16,65 @@
     <div id="teamList"></div>
 
     <script>
-$(document).ready(function(){
-    $("#teamForm").submit(function(event){
-        event.preventDefault();
-        $.ajax({
-            url: 'create.php',
-            type: 'post',
-            data: $("#teamForm").serialize(),
-            success: function(response) {
-                alert(response);
-                loadTeams();
-            }
-        });
-    });
+        $(document).ready(function() {
+            $("#teamForm").submit(function(event) {
+                event.preventDefault();
+                $.ajax({
+                    url: 'create.php',
+                    type: 'post',
+                    data: $("#teamForm").serialize(),
+                    success: function(response) {
+                        alert(response);
+                        loadTeams();
+                    }
+                });
+            });
 
-    function loadTeams() {
-        $.ajax({
-            url: 'read.php',
-            type: 'get',
-            success: function(response) {
-                $('#teamList').html(response);
-                $('.delete').click(function(){
-                    var id = $(this).data('id');
-                    $.ajax({
-                        url: 'delete.php',
-                        type: 'post',
-                        data: { id: id },
-                        success: function(response) {
-                            alert(response);
-                            loadTeams();
-                        }
-                    });
+            function loadTeams() {
+                $.ajax({
+                    url: 'read.php',
+                    type: 'get',
+                    success: function(response) {
+                        $('#teamList').html(response);
+                        $('.delete').click(function() {
+                            var id = $(this).data('id');
+                            $.ajax({
+                                url: 'delete.php',
+                                type: 'post',
+                                data: {
+                                    id: id
+                                },
+                                success: function(response) {
+                                    alert(response);
+                                    loadTeams();
+                                }
+                            });
+                        });
+                        $('.update').click(function() {
+                            var id = $(this).data('id');
+                            var name = prompt("Enter new team name");
+                            if (name) {
+                                $.ajax({
+                                    url: 'update.php',
+                                    type: 'post',
+                                    data: {
+                                        id: id,
+                                        name: name
+                                    },
+                                    success: function(response) {
+                                        alert(response);
+                                        loadTeams();
+                                    }
+                                });
+                            }
+                        });
+                    }
                 });
             }
-        });
-    }
 
-    loadTeams();
-});
-</script>
+            loadTeams();
+        });
+    </script>
 </body>
+
 </html>
