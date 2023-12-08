@@ -40,6 +40,9 @@ $nomeUsuario = $_SESSION['nome'];
         <br>
         <br>
         <a href="editarusuario.php" class="btn">editar usuário</a>
+        <br>
+        <br>
+        <a href="ExcluirUsuario.php" class="btn">Excluir Usuário</a>
     </div>
 
     <footer>
