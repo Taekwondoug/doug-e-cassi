@@ -1,11 +1,16 @@
 <?php
 session_start();
 
-// Verifica se o usuário está autenticado
+// Verificar se o usuário está autenticado
 if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
+    header("Location: index.php");
     exit();
 }
+$conn = new mysqli("localhost", "root", "", "escola");
+
+
+// Obter dados do usuário a partir da sessão (apenas para ilustração)
+$nomeUsuario = $_SESSION['nome'];
 ?>
 
 <!DOCTYPE html>
@@ -13,13 +18,32 @@ if (!isset($_SESSION['email'])) {
 <head>
     <meta charset="UTF-8">
     <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Bem-vindo ao Dashboard</h2>
-    <p>Nome: <?php echo $_SESSION['nome']; ?></p>
-    <p>Email: <?php echo $_SESSION['email']; ?></p>
-    <p>Matrícula ultra hiper secreta: <?php echo $_SESSION['matricula']; ?></p>
-    <br>
-    <a href="logout.php">Logout</a>
+    <header>
+        <h1>Sistema de Professores</h1>
+    </header>
+    
+    <div class="container">
+        <h2>Dashboard</h2>
+        <p><?php echo $nomeUsuario; ?>!</p>
+        
+        <!-- Adicione aqui o conteúdo do dashboard -->
+        <!-- ... -->
+
+        <br>
+        <a href="capa.php" class="btn">Ver Professores</a>
+        <br>
+        <br>
+        <a href="logout.php" class="btn">Sair</a>
+        <br>
+        <br>
+        <a href="editarusuario.php" class="btn">editar usuário</a>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Sistema de Professores</p>
+    </footer>
 </body>
 </html>

@@ -1,46 +1,71 @@
 <?php
-include 'conexao.php';
+session_start();
 
-// Selecionar todos os professores
-$sql = "SELECT * FROM professores";
-$result = $conn->query($sql);
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $email = $_POST["email"];
+    $senha = $_POST["senha"];
+
+    // Conectar ao banco de dados (ajuste as configurações conforme necessário)
+    $conn = new mysqli("localhost", "root", "", "escola");
+
+    // Verificar a conexão
+    if ($conn->connect_error) {
+        die("Conexão falhou: " . $conn->connect_error);
+    }
+
+    // Consultar o banco de dados para encontrar o usuário
+    $sql = "SELECT * FROM usuarios WHERE email = '$email'";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows == 1) {
+        $row = $result->fetch_assoc();
+
+        // Verificar a senha
+        if (password_verify($senha, $row["senha"])) {
+            // Senha correta, criar uma sessão de usuário
+            $_SESSION["id"] = $row["id"];
+            $_SESSION["nome"] = $row["nome"];
+            $_SESSION["email"] = $row["email"];
+
+            // Redirecionar para a página de dashboard (ou qualquer outra página desejada)
+            header("Location: dashboard.php");
+            exit();
+        } else {
+            $erro = "Senha incorreta";
+        }
+    } else {
+        $erro = "Usuário não encontrado";
+    }
+
+    $conn->close();
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>CRUD de Professores</title>
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h2>Lista de Professores</h2>
-    <table border="1">
-        <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>Idade</th>
-            <th>Especialidade</th>
-            <th>Graduação</th>
-            <th>Ações</th>
-        </tr>
-        <?php
-        if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()) {
-                echo "<tr>";
-                echo "<td>".$row["id"]."</td>";
-                echo "<td>".$row["nome"]."</td>";
-                echo "<td>".$row["idade"]."</td>";
-                echo "<td>".$row["especialidade"]."</td>";
-                echo "<td>".$row["graduacao"]."</td>";
-                echo '<td><a href="editar.php?id='.$row["id"].'">Editar</a> | <a href="excluir.php?id='.$row["id"].'">Excluir</a></td>';
-                echo "</tr>";
-            }
-        } else {
-            echo "<tr><td colspan='6'>Nenhum professor encontrado.</td></tr>";
-        }
-        ?>
-    </table>
-    <br>
-    <a href="adicionar.php">Adicionar Novo Professor</a>
+    <header>
+        <h1>Sistema de Professores</h1>
+    </header>
+    
+    <div class="container">
+        <h2>Login</h2>
+        <?php if (isset($erro)) echo "<p class='erro'>$erro</p>"; ?>
+        <form method="post" action="">
+            Email: <input type="text" name="email" required><br>
+            Senha: <input type="password" name="senha" required><br>
+            <input type="submit" value="Login">
+        </form>
+        <br>
+        <p>Não tem uma conta? <a href="cadastro.php">Cadastrar-se</a></p>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Sistema de Professores</p>
+    </footer>
 </body>
 </html>
